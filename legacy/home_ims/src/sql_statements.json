@@ -1,0 +1,1674 @@
+{
+    "ddl": [
+        {
+            "function": "Create Database",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE DATABASE IF NOT EXISTS Home_IMS;"
+            ],
+            "order": 0
+        },
+        {
+            "function": "Create Table ItemType",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.ItemType (",
+                "name VARCHAR(255) NOT NULL,",
+                "unit VARCHAR(16),",
+                "PRIMARY KEY (name)",
+                ");"
+            ],
+            "order": 1
+        },
+        {
+            "function": "Create Table Consumable",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Consumable (",
+                "name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (name),",
+                "FOREIGN KEY (name) REFERENCES ItemType(name)",
+                ");"
+            ],
+            "order": 2
+        },
+        {
+            "function": "Create Table Durable",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Durable (",
+                "name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (name),",
+                "FOREIGN KEY (name) REFERENCES ItemType(name)",
+                ");"
+            ],
+            "order": 3
+        },
+        {
+            "function": "Create Table NotFood",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.NotFood (",
+                "name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (name),",
+                "FOREIGN KEY (name) REFERENCES Consumable(name)",
+                ");"
+            ],
+            "order": 4
+        },
+        {
+            "function": "Create Table Food",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Food (",
+                "name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (name),",
+                "FOREIGN KEY (name) REFERENCES Consumable(name)",
+                ");"
+            ],
+            "order": 5
+        },
+        {
+            "function": "Create Table Template",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Template (",
+                "name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (name)",
+                ");"
+            ],
+            "order": 6
+        },
+        {
+            "function": "Create Table OtherTemplate",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.OtherTemplate (",
+                "name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (name),",
+                "FOREIGN KEY (name) REFERENCES Template(name) ON DELETE CASCADE",
+                ");"
+            ],
+            "order": 7
+        },
+        {
+            "function": "Create Table Location",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Location (",
+                "name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (name)",
+                ");"
+            ],
+            "order": 8
+        },
+        {
+            "function": "Create Table Recipe",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Recipe (",
+                "recipe_name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (recipe_name),",
+                "FOREIGN KEY (recipe_name) REFERENCES Template(name) ON DELETE CASCADE",
+                ");"
+            ],
+            "order": 9
+        },
+        {
+            "function": "Create Table MealSchedule",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.MealSchedule (",
+                "recipe_name VARCHAR(255) NOT NULL,",
+                "timestamp DATETIME NOT NULL,",
+                "meal_type VARCHAR(31),",
+                "PRIMARY KEY (recipe_name, timestamp),",
+                "FOREIGN KEY (recipe_name) REFERENCES Recipe(recipe_name) ON DELETE CASCADE",
+                ");"
+            ],
+            "order": 10
+        },
+        {
+            "function": "Create Table User",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.User (",
+                "name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (name)",
+                ");"
+            ],
+            "order": 11
+        },
+        {
+            "function": "Create Table Dependent",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Dependent (",
+                "name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (name),",
+                "FOREIGN KEY (name) REFERENCES User(name)",
+                ");"
+            ],
+            "order": 12
+        },
+        {
+            "function": "Create Table Parent",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Parent (",
+                "name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (name),",
+                "FOREIGN KEY (name) REFERENCES User(name)",
+                ");"
+            ],
+            "order": 13
+        },
+        {
+            "function": "Create Table Ingredients",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Ingredients (",
+                "food_name VARCHAR(255) NOT NULL,",
+                "recipe_name VARCHAR(255) NOT NULL,",
+                "quantity FLOAT NOT NULL,",
+                "PRIMARY KEY (food_name, recipe_name),",
+                "FOREIGN KEY (food_name) REFERENCES Food(name),",
+                "FOREIGN KEY (recipe_name) REFERENCES Recipe(recipe_name) ON DELETE CASCADE,",
+                "CHECK (quantity > 0)",
+                ");"
+            ],
+            "order": 14
+        },
+        {
+            "function": "Create Table Storage",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Storage (",
+                "storage_name VARCHAR(255) NOT NULL,",
+                "location_name VARCHAR(255) NOT NULL,",
+                "capacity FLOAT NOT NULL DEFAULT 0,",
+                "PRIMARY KEY (storage_name),",
+                "FOREIGN KEY (location_name) REFERENCES Location(name),",
+                "CHECK (capacity >= 0 AND capacity <= 2)",
+                ");"
+            ],
+            "order": 15
+        },
+        {
+            "function": "Create Table Dry",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Dry (",
+                "name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (name),",
+                "FOREIGN KEY (name) REFERENCES Storage(storage_name)",
+                ");"
+            ],
+            "order": 16
+        },
+        {
+            "function": "Create Table Appliance",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Appliance (",
+                "name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (name),",
+                "FOREIGN KEY (name) REFERENCES Storage(storage_name)",
+                ");"
+            ],
+            "order": 17
+        },
+        {
+            "function": "Create Table Fridge",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Fridge (",
+                "name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (name),",
+                "FOREIGN KEY (name) REFERENCES Appliance (name)",
+                ");"
+            ],
+            "order": 18
+        },
+        {
+            "function": "Create Table Freezer",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Freezer (",
+                "name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (name),",
+                "FOREIGN KEY (name) REFERENCES Appliance (name)",
+                ");"
+            ],
+            "order": 19
+        },
+        {
+            "function": "Create Table Inventory",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Inventory (",
+                "item_name VARCHAR(255) NOT NULL,",
+                "storage_name VARCHAR(255) NOT NULL,",
+                "timestamp DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),",
+                "expiry DATETIME,",
+                "quantity FLOAT NOT NULL,",
+                "PRIMARY KEY (item_name, storage_name, timestamp),",
+                "FOREIGN KEY (item_name) REFERENCES ItemType (name),",
+                "FOREIGN KEY (storage_name) REFERENCES Storage (storage_name),",
+                "CHECK (quantity >= 0)",
+                ");"
+            ],
+            "order": 20
+        },
+        {
+            "function": "Create Table Purchase",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.Purchase (",
+                "item_name VARCHAR(255) NOT NULL,",
+                "timestamp DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),",
+                "quantity FLOAT NOT NULL,",
+                "price FLOAT NOT NULL,",
+                "store VARCHAR(255) NOT NULL,",
+                "parent_name VARCHAR(255) NOT NULL,",
+                "PRIMARY KEY (item_name, timestamp),",
+                "FOREIGN KEY (parent_name) REFERENCES Parent (name),",
+                "FOREIGN KEY (item_name) REFERENCES ItemType (name),",
+                "CHECK (quantity > 0)",
+                ");"
+            ],
+            "order": 21
+        },
+        {
+            "function": "Create Table History",
+            "inputs": [],
+            "outputs": [],
+            "query": [
+                "CREATE TABLE IF NOT EXISTS Home_IMS.History (",
+                "item_name VARCHAR(255) NOT NULL,",
+                "timestamp DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),",
+                "quantity FLOAT NOT NULL,",
+                "wasted BOOLEAN NOT NULL,",
+                "user_name VARCHAR(255),",
+                "PRIMARY KEY (item_name, timestamp),",
+                "FOREIGN KEY (item_name) REFERENCES ItemType(name),",
+                "CHECK (quantity > 0)",
+                ");"
+            ],
+            "order": 22
+        }
+
+    ],
+    "dml/dql": {
+        "MealSchedule": {
+            "Schedule a meal": {
+                "inputs": [
+                    "recipe_name",
+                    "timestamp",
+                    "meal_type"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.MealSchedule (recipe_name, timestamp, meal_type)",
+                    "VALUES (%s,  %s, %s);"
+                ],
+                "notes": [
+                    "Schedule a meal"
+                ]
+            },
+            "Delete a meal": {
+                "inputs": [
+                    "recipe_name",
+                    "timestamp"
+                ],
+                "outputs": [],
+                "query": [
+                    "DELETE FROM Home_IMS.MealSchedule",
+                    "WHERE recipe_name = %s",
+                    "AND timestamp = %s;"
+                ],
+                "notes": [
+                    "Delete a meal"
+                ]
+            },
+            "Select meals": {
+                "inputs": [
+                    "recipe_name",
+                    "timestamp_from",
+                    "timestamp_to",
+                    "meal_type"
+                ],
+                "outputs": [
+                    "recipe_name",
+                    "timestamp",
+                    "meal_type"
+                ],
+                "query": [
+                    "SELECT recipe_name, timestamp, meal_type",
+                    "FROM Home_IMS.MealSchedule",
+                    "WHERE recipe_name LIKE %s ESCAPE '!'",
+                    "AND timestamp BETWEEN %s AND %s",
+                    "AND meal_type LIKE %s ESCAPE '!'",
+                    "ORDER BY timestamp DESC;"
+                ],
+                "notes": [
+                    "Select meals"
+                ]
+            }
+        },
+        "ItemType": {
+            "Add item type": {
+                "inputs": [
+                    "name",
+                    "unit"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.ItemType (name, unit)",
+                    "VALUES (%s, %s);"
+                ],
+                "notes": [
+                    "Add item type"
+                ]
+            },
+            "Select item type": {
+                "inputs": [
+                    "name",
+                    "unit"
+                ],
+                "outputs": [
+                    "name",
+                    "unit"
+                ],
+                "query": [
+                    "SELECT name, unit",
+                    "FROM Home_IMS.ItemType",
+                    "WHERE name LIKE %s",
+                    "AND unit LIKE %s;"
+                ],
+                "notes": [
+                    "Select item type"
+                ]
+            }
+        },
+        "Consumable": {
+            "Add consumable type": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Consumable (name)",
+                    "VALUES (%s);"
+                ],
+                "notes": [
+                    "Add consumable"
+                ]
+            },
+            "Select consumable type": {
+                "inputs": [
+                    "name",
+                    "unit"
+                ],
+                "outputs": [
+                    "name",
+                    "unit"
+                ],
+                "query": [
+                    "SELECT I.name, I.unit",
+                    "FROM Home_IMS.ItemType AS I",
+                    "JOIN Home_IMS.Consumable AS C ON I.name = C.name",
+                    "WHERE I.name LIKE %s",
+                    "AND I.unit LIKE %s;"
+                ],
+                "notes": [
+                    "Select consumable"
+                ]
+            }
+        },
+        "Durable": {
+            "Add durable type": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Durable (name)",
+                    "VALUES (%s);"
+                ],
+                "notes": [
+                    "Add durable"
+                ]
+            },
+            "Select durable type": {
+                "inputs": [
+                    "name",
+                    "unit"
+                ],
+                "outputs": [
+                    "name",
+                    "unit"
+                ],
+                "query": [
+                    "SELECT I.name, I.unit",
+                    "FROM Home_IMS.ItemType AS I",
+                    "JOIN Home_IMS.Durable AS C ON I.name = C.name",
+                    "WHERE I.name LIKE %s",
+                    "AND I.unit LIKE %s;"
+                ],
+                "notes": [
+                    "Select durable"
+                ]
+            }
+        },
+        "Food": {
+            "Add food type": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Food (name)",
+                    "VALUES (%s);"
+                ],
+                "notes": [
+                    "Add food"
+                ]
+            },
+            "Select food type": {
+                "inputs": [],
+                "outputs": [
+                    "name",
+                    "unit"
+                ],
+                "query": [
+                    "SELECT T.name, T.unit",
+                    "FROM Home_IMS.ItemType AS T",
+                    "JOIN Home_IMS.Food AS F ON T.name = F.name;"
+                ],
+                "notes": [
+                    "Select food"
+                ]
+            }
+        },
+        "NotFood": {
+            "Add notfood type": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.NotFood (name)",
+                    "VALUES (%s);"
+                ],
+                "notes": [
+                    "Add not food"
+                ]
+            },
+            "Select not food type": {
+                "inputs": [
+                    "name",
+                    "unit"
+                ],
+                "outputs": [
+                    "name",
+                    "unit"
+                ],
+                "query": [
+                    "SELECT I.name, I.unit",
+                    "FROM Home_IMS.ItemType AS I",
+                    "JOIN Home_IMS.NotFood AS C ON I.name = C.name",
+                    "WHERE I.name LIKE %s",
+                    "AND I.unit LIKE %s;"
+                ],
+                "notes": [
+                    "Select not food"
+                ]
+            }
+        },
+        "Location": {
+            "Add location": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Location (name)",
+                    "VALUES (%s);"
+                ],
+                "notes": [
+                    "Add location"
+                ]
+            },
+            "Delete location": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "DELETE FROM Home_IMS.Location",
+                    "WHERE name = %s;"
+                ],
+                "notes": [
+                    "Delete location"
+                ]
+            },
+            "Select locations": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [
+                    "name"
+                ],
+                "query": [
+                    "SELECT name",
+                    "FROM Home_IMS.Location",
+                    "WHERE name LIKE %s;"
+                ],
+                "notes": [
+                    "Select locations"
+                ]
+            }
+        },
+        "Storage": {
+            "Add storage": {
+                "inputs": [
+                    "storage_name",
+                    "location_name",
+                    "capacity"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Storage (storage_name, location_name, capacity)",
+                    "VALUES (%s, %s, %s);"
+                ],
+                "notes": [
+                    "Add storage"
+                ]
+            },
+            "Delete storage": {
+                "inputs": [
+                    "storage_name"
+                ],
+                "outputs": [],
+                "query": [
+                    "DELETE FROM Home_IMS.Storage",
+                    "WHERE storage_name = %s;"
+                ],
+                "notes": [
+                    "Delete storage"
+                ]
+            },
+            "Select storage": {
+                "inputs": [
+                    "storage_name",
+                    "location_name",
+                    "capacity_low",
+                    "capacity_high"
+                ],
+                "outputs": [
+                    "storage_name",
+                    "location_name",
+                    "capacity"
+                ],
+                "query": [
+                    "SELECT storage_name, location_name, capacity",
+                    "FROM Home_IMS.Storage",
+                    "WHERE storage_name LIKE %s",
+                    "AND location_name LIKE %s",
+                    "AND capacity BETWEEN %s AND %s;"
+                ],
+                "notes": [
+                    "Select storage"
+                ]
+            }
+        },
+        "Dry": {
+            "Add dry storage": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Dry (name)",
+                    "VALUES (%s);"
+                ],
+                "notes": [
+                    "Add dry storage"
+                ]
+            },
+            "Delete dry storage": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "DELETE FROM Home_IMS.Dry",
+                    "WHERE name = %s;"
+                ],
+                "notes": [
+                    "Delete dry storage"
+                ]
+            },
+            "Select dry storage": {
+                "inputs": [
+                    "storage_name",
+                    "location_name",
+                    "capacity_low",
+                    "capacity_high"
+                ],
+                "outputs": [
+                    "storage_name",
+                    "location_name",
+                    "capacity"
+                ],
+                "query": [
+                    "SELECT S.storage_name, S.location_name, S.capacity",
+                    "FROM Home_IMS.Storage as S",
+                    "JOIN Home_IMS.Dry as D ON S.storage_name = D.name",
+                    "WHERE S.storage_name LIKE %s",
+                    "AND S.location_name LIKE %s",
+                    "AND S.capacity BETWEEN %s AND %s;"
+                ],
+                "notes": [
+                    "Select dry storage"
+                ]
+            }
+        },
+        "Appliance": {
+            "Add appliance storage": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Appliance (name)",
+                    "VALUES (%s);"
+                ],
+                "notes": [
+                    "Add appliance"
+                ]
+            },
+            "Delete appliance storage": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "DELETE FROM Home_IMS.Appliance",
+                    "WHERE name = %s;"
+                ],
+                "notes": [
+                    "Delete appliance"
+                ]
+            },
+            "Select appliance storage": {
+                "inputs": [
+                    "storage_name",
+                    "location_name",
+                    "capacity_low",
+                    "capacity_high"
+                ],
+                "outputs": [
+                    "storage_name",
+                    "location_name",
+                    "capacity"
+                ],
+                "query": [
+                    "SELECT S.storage_name, S.location_name, S.capacity",
+                    "FROM Home_IMS.Storage as S",
+                    "JOIN Home_IMS.Appliance as A ON S.storage_name = A.name",
+                    "WHERE S.storage_name LIKE %s",
+                    "AND S.location_name LIKE %s",
+                    "AND S.capacity BETWEEN %s AND %s;"
+                ],
+                "notes": [
+                    "Select appliance"
+                ]
+            }
+        },
+        "Fridge": {
+            "Add fridge storage": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Fridge (name)",
+                    "VALUES (%s);"
+                ],
+                "notes": [
+                    "Add fridge"
+                ]
+            },
+            "Delete fridge storage": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "DELETE FROM Home_IMS.Fridge",
+                    "WHERE name = %s;"
+                ],
+                "notes": [
+                    "Delete fridge"
+                ]
+            },
+            "Select fridge storage": {
+                "inputs": [
+                    "storage_name",
+                    "location_name",
+                    "capacity_low",
+                    "capacity_high"
+                ],
+                "outputs": [
+                    "storage_name",
+                    "location_name",
+                    "capacity"
+                ],
+                "query": [
+                    "SELECT S.storage_name, S.location_name, S.capacity",
+                    "FROM Home_IMS.Storage as S",
+                    "JOIN Home_IMS.Fridge as F ON S.storage_name = F.name",
+                    "WHERE S.storage_name LIKE %s",
+                    "AND S.location_name LIKE %s",
+                    "AND S.capacity BETWEEN %s AND %s;"
+                ],
+                "notes": [
+                    "Select fridge"
+                ]
+            }
+        },
+        "Freezer": {
+            "Add freezer storage": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Freezer (name)",
+                    "VALUES (%s);"
+                ],
+                "notes": [
+                    "Add freezer"
+                ]
+            },
+            "Delete freezer storage": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "DELETE FROM Home_IMS.Freezer",
+                    "WHERE name = %s;"
+                ],
+                "notes": [
+                    "Delete freezer"
+                ]
+            },
+            "Select freezer storage": {
+                "inputs": [
+                    "storage_name",
+                    "location_name",
+                    "capacity_low",
+                    "capacity_high"
+                ],
+                "outputs": [
+                    "storage_name",
+                    "location_name",
+                    "capacity"
+                ],
+                "query": [
+                    "SELECT S.storage_name, S.location_name, S.capacity",
+                    "FROM Home_IMS.Storage as S",
+                    "JOIN Home_IMS.Freezer as F ON S.storage_name = F.name",
+                    "WHERE S.storage_name LIKE %s",
+                    "AND S.location_name LIKE %s",
+                    "AND S.capacity BETWEEN %s AND %s;"
+                ],
+                "notes": [
+                    "Select freezer"
+                ]
+            }
+        },
+        "User": {
+            "Add user": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.User (name)",
+                    "VALUES (%s);"
+                ],
+                "notes": [
+                    "Add user"
+                ]
+            },
+            "Select users": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [
+                    "name",
+                    "is_parent"
+                ],
+                "query": [
+                    "SELECT name, EXISTS (",
+                    " SELECT P.name",
+                    " FROM Home_IMS.Parent AS P",
+                    " WHERE P.name = U.name",
+                    ") AS is_parent",
+                    "FROM Home_IMS.User as U",
+                    "WHERE U.name LIKE %s;"
+                ],
+                "notes": [
+                    "Select users"
+                ]
+            },
+            "Select items used by user": {
+                "inputs": [
+                    "user_name"
+                ],
+                "outputs": [
+                    "item_name",
+                    "timestamp"
+                ],
+                "query": [
+                    "SELECT item_name, timestamp",
+                    "FROM Home_IMS.History",
+                    "WHERE user_name = %s;"
+                ],
+                "notes": [
+                    "Select items used by user"
+                ]
+            }
+        },
+        "Parent": {
+            "Add parent": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Parent (name)",
+                    "VALUES (%s);"
+                ],
+                "notes": [
+                    "Add parent"
+                ]
+            },
+            "Select parents": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [
+                    "name"
+                ],
+                "query": [
+                    "SELECT name",
+                    "FROM Home_IMS.Parent",
+                    "WHERE name LIKE %s;"
+                ],
+                "notes": [
+                    "Select parents"
+                ]
+            }
+        },
+        "Dependent": {
+            "Add dependent": {
+                "inputs": [
+                    "name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Dependent (name)",
+                    "VALUES (%s);"
+                ],
+                "notes": [
+                    "Add dependent"
+                ]
+            }
+        },
+        "History": {
+            "Select history records": {
+                "inputs": [],
+                "outputs": [
+                    "item_name",
+                    "timestamp",
+                    "quantity",
+                    "unit",
+                    "wasted",
+                    "user_name"
+                ],
+                "query": [
+                    "SELECT H.item_name, H.timestamp, H.quantity, T.unit, H.wasted, H.user_name",
+                    "FROM Home_IMS.History AS H",
+                    "JOIN Home_IMS.ItemType AS T ON H.item_name = T.name;"
+                ]
+            },
+            "Select usage statistics": {
+                "inputs": [],
+                "outputs": [
+                    "item_name",
+                    "unit",
+                    "amt_used",
+                    "amt_wasted",
+                    "money_spent"
+                ],
+                "query": [
+                    "SELECT H.item_name,",
+                    "T.unit,",
+                    "SUM(CASE WHEN H.wasted = false THEN H.quantity ELSE 0 END) AS amt_used,",
+                    "SUM(CASE WHEN H.wasted = true THEN H.quantity ELSE 0 END) AS amt_wasted,",
+                    "(",
+                    "  SELECT IFNULL(SUM(P.price), 0)",
+                    "  FROM Home_IMS.Purchase AS P",
+                    "  WHERE P.item_name = H.item_name",
+                    ") AS money_spent",
+                    "FROM Home_IMS.History AS H",
+                    "JOIN Home_IMS.ItemType AS T ON H.item_name = T.name",
+                    "GROUP BY H.item_name;"
+                ]
+            }
+        },
+        "Wasted": {
+            "Add item wasted record": {
+                "inputs": [
+                    "item_name",
+                    "quantity"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.History (item_name, quantity, wasted)",
+                    "VALUES (%s, %s, true);"
+                ],
+                "notes": [
+                    "Add item wasted record"
+                ]
+            },
+            "Select waste records": {
+                "inputs": [
+                    "item_name",
+                    "timestamp_from",
+                    "timestamp_to"
+                ],
+                "outputs": [
+                    "item_name",
+                    "timestamp",
+                    "quantity"
+                ],
+                "query": [
+                    "SELECT item_name, timestamp, quantity",
+                    "FROM Home_IMS.History",
+                    "WHERE wasted = true",
+                    "AND item_name LIKE %s ESCAPE '!'",
+                    "AND timestamp BETWEEN %s AND %s;"
+                ],
+                "notes": [
+                    "Select waste records"
+                ]
+            }
+        },
+        "Used": {
+            "Add item used record": {
+                "inputs": [
+                    "item_name",
+                    "quantity",
+                    "user_name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.History (item_name, quantity, wasted, user_name)",
+                    "VALUES (%s, %s, false, %s);"
+                ],
+                "notes": [
+                    "Add item used record"
+                ]
+            },
+            "Select used records": {
+                "inputs": [
+                    "item_name",
+                    "timestamp_from",
+                    "timestamp_to",
+                    "user_name"
+                ],
+                "outputs": [
+                    "item_name",
+                    "timestamp",
+                    "quantity",
+                    "user_name"
+                ],
+                "query": [
+                    "SELECT item_name, timestamp, quantity, user_name",
+                    "FROM Home_IMS.History",
+                    "WHERE wasted = false",
+                    "AND item_name LIKE %s ESCAPE '!'",
+                    "AND timestamp BETWEEN %s AND %s",
+                    "AND user_name LIKE %s ESCAPE '!';"
+                ],
+                "notes": [
+                    "Select used records"
+                ]
+            }
+        },
+        "Purchase": {
+            "Add purchase record": {
+                "inputs": [
+                    "item_name",
+                    "quantity",
+                    "price",
+                    "store",
+                    "parent_name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Purchase (item_name, quantity, price, store, parent_name)",
+                    "VALUES (%s, %s, %s, %s, %s);"
+                ],
+                "notes": [
+                    "Add purchase record"
+                ]
+            },
+            "Select purchases": {
+                "inputs": [],
+                "outputs": [
+                    "item_name",
+                    "timestamp",
+                    "quantity",
+                    "unit",
+                    "price",
+                    "store",
+                    "parent_name"
+                ],
+                "query": [
+                    "SELECT P.item_name, P.timestamp, P.quantity, T.unit, P.price, P.store, P.parent_name",
+                    "FROM Home_IMS.Purchase AS P",
+                    "JOIN Home_IMS.ItemType AS T ON P.item_name = T.name;"
+                ],
+                "notes": [
+                    "Select purchases",
+                    "TODO: We don't need these filters yet."
+                ]
+            },
+            "Get most expensive purchase": {
+                "inputs": [
+                    "item_name",
+                    "timestamp_from",
+                    "timestamp_to",
+                    "quantity_min",
+                    "quantity_max",
+                    "store",
+                    "parent_name"
+                ],
+                "outputs": [
+                    "max_price"
+                ],
+                "query": [
+                    "SELECT MAX(price) AS price",
+                    "FROM Home_IMS.Purchase",
+                    "WHERE item_name LIKE %s",
+                    "AND timestamp BETWEEN %s AND %s",
+                    "AND quantity BETWEEN %s AND %s",
+                    "AND store LIKE %s",
+                    "AND parent_name LIKE %s;"
+                ],
+                "notes": [
+                    "Get most expensive purchase"
+                ]
+            },
+            "Get most expensive purchase price by item name": {
+                "inputs": [
+                    "timestamp_from",
+                    "timestamp_to",
+                    "quantity_min",
+                    "quantity_max",
+                    "store",
+                    "parent_name"
+                ],
+                "outputs": [
+                    "max_price"
+                ],
+                "query": [
+                    "SELECT MAX(price) AS price",
+                    "FROM Home_IMS.Purchase",
+                    "GROUP BY item_name",
+                    "WHERE timestamp BETWEEN %s AND %s",
+                    "AND quantity BETWEEN %s AND %s",
+                    "AND store LIKE %s",
+                    "AND parent_name LIKE %s;"
+                ],
+                "notes": [
+                    "Get most expensive purchase price by item name"
+                ]
+            },
+            "Get most expensive purchase price by parent name": {
+                "inputs": [
+                    "item_name",
+                    "timestamp_from",
+                    "timestamp_to",
+                    "quantity_min",
+                    "quantity_max",
+                    "store"
+                ],
+                "outputs": [
+                    "max_price"
+                ],
+                "query": [
+                    "SELECT MAX(price) AS price",
+                    "FROM Home_IMS.Purchase",
+                    "GROUP BY parent_name",
+                    "WHERE item_name LIKE %s",
+                    "AND timestamp BETWEEN %s AND %s",
+                    "AND quantity BETWEEN %s AND %s",
+                    "AND store LIKE %s;"
+                ],
+                "notes": [
+                    "Get most expensive purchase price by parent name"
+                ]
+            },
+            "Get most expensive purchase price by store": {
+                "inputs": [
+                    "item_name",
+                    "timestamp_from",
+                    "timestamp_to",
+                    "quantity_min",
+                    "quantity_max",
+                    "parent_name"
+                ],
+                "outputs": [
+                    "max_price"
+                ],
+                "query": [
+                    "SELECT MAX(price) AS price",
+                    "FROM Home_IMS.Purchase",
+                    "GROUP BY store",
+                    "WHERE item_name LIKE %s",
+                    "AND timestamp BETWEEN %s AND %s",
+                    "AND quantity BETWEEN %s AND %s",
+                    "AND parent_name LIKE %s;"
+                ],
+                "notes": [
+                    "Get most expensive purchase price by store"
+                ]
+            },
+            "Get average purchase price": {
+                "inputs": [
+                    "item_name",
+                    "timestamp_from",
+                    "timestamp_to",
+                    "quantity_min",
+                    "quantity_max",
+                    "store",
+                    "parent_name"
+                ],
+                "outputs": [
+                    "average_price"
+                ],
+                "query": [
+                    "SELECT AVG(price) AS price",
+                    "FROM Home_IMS.Purchase",
+                    "WHERE item_name LIKE %s",
+                    "AND timestamp BETWEEN %s AND %s",
+                    "AND quantity BETWEEN %s AND %s",
+                    "AND store LIKE %s",
+                    "AND parent_name LIKE %s;"
+                ],
+                "notes": [
+                    "Get average purchase price"
+                ]
+            },
+            "Get average purchase price by item name": {
+                "inputs": [
+                    "timestamp_from",
+                    "timestamp_to",
+                    "quantity_min",
+                    "quantity_max",
+                    "store",
+                    "parent_name"
+                ],
+                "outputs": [
+                    "average_price"
+                ],
+                "query": [
+                    "SELECT AVG(price) AS price",
+                    "FROM Home_IMS.Purchase",
+                    "GROUP BY item_name",
+                    "WHERE timestamp BETWEEN %s AND %s",
+                    "AND quantity BETWEEN %s AND %s",
+                    "AND store LIKE %s",
+                    "AND parent_name LIKE %s;"
+                ],
+                "notes": [
+                    "Get average purchase price by item name"
+                ]
+            },
+            "Get average purchase price by parent name": {
+                "inputs": [
+                    "item_name",
+                    "timestamp_from",
+                    "timestamp_to",
+                    "quantity_min",
+                    "quantity_max",
+                    "store"
+                ],
+                "outputs": [
+                    "average_price"
+                ],
+                "query": [
+                    "SELECT AVG(price) AS price",
+                    "FROM Home_IMS.Purchase",
+                    "GROUP BY parent_name",
+                    "WHERE item_name LIKE %s",
+                    "AND timestamp BETWEEN %s AND %s",
+                    "AND quantity BETWEEN %s AND %s",
+                    "AND store LIKE %s;"
+                ],
+                "notes": [
+                    "Get average purchase price by parent name"
+                ]
+            },
+            "Get average purchase price by store": {
+                "inputs": [
+                    "item_name",
+                    "timestamp_from",
+                    "timestamp_to",
+                    "quantity_min",
+                    "quantity_max",
+                    "parent_name"
+                ],
+                "outputs": [
+                    "average_price"
+                ],
+                "query": [
+                    "SELECT AVG(price) AS price",
+                    "FROM Home_IMS.Purchase",
+                    "GROUP BY store",
+                    "WHERE item_name LIKE %s",
+                    "AND timestamp BETWEEN %s AND %s",
+                    "AND quantity BETWEEN %s AND %s",
+                    "AND parent_name LIKE %s;"
+                ],
+                "notes": [
+                    "Get average purchase price by store"
+                ]
+            },
+            "Get total cost": {
+                "inputs": [
+                    "item_name",
+                    "timestamp_from",
+                    "timestamp_to",
+                    "parent_name"
+                ],
+                "outputs": [
+                    "total_cost"
+                ],
+                "query": [
+                    "SELECT SUM(price)",
+                    "FROM Home_IMS.Purchase",
+                    "WHERE item_name LIKE %s",
+                    "AND timestamp BETWEEN %s AND %s",
+                    "AND parent_name LIKE %s;"
+                ],
+                "notes": [
+                    "Get total cost"
+                ]
+            }
+        },
+        "Template": {
+            "Create template": {
+                "inputs": [
+                    "template_name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Template (name)",
+                    "VALUES (%s);"
+                ]
+            },
+            "Delete template": {
+                "inputs": [
+                    "template_name"
+                ],
+                "outputs": [],
+                "query": [
+                    "DELETE FROM Home_IMS.Template",
+                    "WHERE name = %s;"
+                ]
+            }
+        },
+        "Recipe": {
+            "Create recipe": {
+                "inputs": [
+                    "recipe_name"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Recipe (recipe_name)",
+                    "VALUES (%s);"
+                ],
+                "notes": [
+                    "Create recipe"
+                ]
+            },
+            "Delete recipe": {
+                "inputs": [
+                    "recipe_name"
+                ],
+                "outputs": [],
+                "query": [
+                    "DELETE FROM Home_IMS.Recipe",
+                    "WHERE recipe_name = %s;"
+                ],
+                "notes": [
+                    "Delete recipe"
+                ]
+            },
+            "View recipes": {
+                "inputs": [
+                    "recipe_name"
+                ],
+                "outputs": [
+                    "recipe_name"
+                ],
+                "query": [
+                    "SELECT R.recipe_name",
+                    "FROM Home_IMS.Recipe AS R",
+                    "WHERE R.recipe_name LIKE %s ESCAPE '!';"
+                ],
+                "notes": [
+                    "View recipes"
+                ]
+            },
+            "Get estimated recipe cost": {
+                "inputs": [
+                    "recipe_name"
+                ],
+                "outputs": [
+                    "recipe_name",
+                    "cost"
+                ],
+                "query": [
+                    "SELECT R.recipe_name, SUM(P.avg_item_price) as cost",
+                    "FROM Home_IMS.Recipe AS R, Home_IMS.Ingredients AS I,",
+                    "( SELECT item_name, AVG(price) as avg_item_price",
+                    "FROM Home_IMS.Purchase",
+                    "GROUP BY item_name",
+                    ") AS P",
+                    "GROUP BY R.recipe_name",
+                    "WHERE R.recipe_name = I.recipe_name",
+                    "AND I.food_name = P.item_name",
+                    "AND R.recipe_name LIKE %s;"
+                ],
+                "notes": [
+                    "Get estimated recipe cost"
+                ]
+            },
+            "Search recipes by ingredient": {
+                "inputs": [
+                    "ingredient"
+                ],
+                "outputs": [
+                    "recipe_name"
+                ],
+                "query": [
+                    "SELECT DISTINCT R.recipe_name",
+                    "FROM Home_IMS.Recipe AS R",
+                    "JOIN Home_IMS.Ingredients AS I",
+                    "ON R.recipe_name = I.recipe_name",
+                    "WHERE I.food_name LIKE %s ESCAPE '!';"
+                ],
+                "notes": [
+                    "Get a list of recipes that include the provided ingredient"
+                ]
+            }
+        },
+        "Ingredients": {
+            "Add ingredient": {
+                "inputs": [
+                    "recipe_name",
+                    "food_name",
+                    "quantity"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Ingredients (recipe_name, food_name, quantity)",
+                    "VALUES (%s, %s, %s);"
+                ],
+                "notes": [
+                    "Add ingredient"
+                ]
+            },
+            "Remove ingredient": {
+                "inputs": [
+                    "food_name",
+                    "recipe_name"
+                ],
+                "outputs": [],
+                "query": [
+                    "DELETE FROM Home_IMS.Ingredients",
+                    "WHERE food_name = %s",
+                    "AND recipe_name = %s;"
+                ],
+                "notes": [
+                    "Remove ingredient"
+                ]
+            },
+            "Change ingredient quantity": {
+                "inputs": [
+                    "new_quantity",
+                    "food_name",
+                    "recipe_name"
+                ],
+                "outputs": [],
+                "query": [
+                    "UPDATE Home_IMS.Ingredients AS I",
+                    "SET I.quantity = %s",
+                    "WHERE I.food_name = %s",
+                    "AND I.recipe_name = %s;"
+                ],
+                "notes": [
+                    "Change ingredient quantity"
+                ]
+            },
+            "View ingredients for a recipe": {
+                "inputs": [
+                    "recipe_name"
+                ],
+                "outputs": [
+                    "food_name",
+                    "quantity"
+                ],
+                "query": [
+                    "SELECT food_name, quantity",
+                    "FROM Home_IMS.Ingredients",
+                    "WHERE recipe_name LIKE %s;"
+                ],
+                "notes": [
+                    "View ingredients for a recipe"
+                ]
+            },
+            "Search inventory by ingredients": {
+                "inputs": [
+                    "recipe_name"
+                ],
+                "outputs": [
+                    "item_name",
+                    "storage_name",
+                    "timestamp",
+                    "quantity"
+                ],
+                "query": [
+                    "SELECT S.item_name, S.storage_name, S.timestamp, S.quantity",
+                    "FROM Home_IMS.Inventory AS S",
+                    "JOIN Home_IMS.Ingredients AS I ON I.food_name = S.item_name",
+                    "WHERE I.recipe_name = %s",
+                    "ORDER BY ISNULL(S.expiry), S.expiry;"
+                ]
+            }
+        },
+        "Inventory": {
+            "Add item to inventory": {
+                "inputs": [
+                    "item_name",
+                    "storage_name",
+                    "expiry",
+                    "quantity"
+                ],
+                "outputs": [],
+                "query": [
+                    "INSERT INTO Home_IMS.Inventory (item_name, storage_name, expiry, quantity)",
+                    "VALUES (%s, %s, %s, %s);"
+                ],
+                "notes": [
+                    "Add item to inventory"
+                ]
+            },
+            "Remove item from inventory": {
+                "inputs": [
+                    "item_name",
+                    "storage_name",
+                    "timestamp"
+                ],
+                "outputs": [],
+                "query": [
+                    "DELETE FROM Home_IMS.Inventory",
+                    "WHERE item_name = %s",
+                    "AND storage_name = %s",
+                    "AND timestamp = %s;"
+                ],
+                "notes": [
+                    "Remove item from inventory"
+                ]
+            },
+            "Change item quantity": {
+                "inputs": [
+                    "new_quantity",
+                    "item_name",
+                    "storage_name",
+                    "timestamp"
+                ],
+                "outputs": [],
+                "query": [
+                    "UPDATE Home_IMS.Inventory AS I",
+                    "SET I.quantity = %s",
+                    "WHERE I.item_name = %s",
+                    "AND I.storage_name = %s",
+                    "AND I.timestamp = %s;"
+                ],
+                "notes": [
+                    "Change item quantity"
+                ]
+            },
+            "View inventory items": {
+                "inputs": [
+                    "item_name",
+                    "storage_name",
+                    "expiry_from",
+                    "expiry_to",
+                    "include_non_perishable"
+                ],
+                "outputs": [
+                    "item_name",
+                    "storage_name",
+                    "location_name",
+                    "timestamp",
+                    "expiry",
+                    "quantity",
+                    "unit"
+                ],
+                "query": [
+                    "SELECT I.item_name, I.storage_name, S.location_name, I.timestamp, I.expiry, I.quantity, T.unit",
+                    "FROM Home_IMS.Inventory AS I",
+                    "JOIN Home_IMS.ItemType AS T ON I.item_name = T.name",
+                    "JOIN Home_IMS.Storage AS S ON S.storage_name = I.storage_name",
+                    "WHERE I.item_name LIKE %s ESCAPE '!'",
+                    "AND I.storage_name LIKE %s ESCAPE '!'",
+                    "AND (I.expiry BETWEEN %s AND %s OR (I.expiry IS NULL AND %s))",
+                    "ORDER BY ISNULL(I.expiry), I.expiry;"
+                ],
+                "notes": [
+                    "View all"
+                ]
+            },
+            "Select item quantity from inventory": {
+                "inputs": [
+                    "item_name",
+                    "storage_name",
+                    "timestamp"
+                ],
+                "outputs": [
+                    "quantity"
+                ],
+                "query": [
+                    "SELECT I.quantity",
+                    "FROM Home_IMS.Inventory AS I",
+                    "WHERE I.item_name = %s",
+                    "AND I.storage_name = %s",
+                    "AND I.timestamp = %s;"
+                ],
+                "notes": [
+                    "View all"
+                ]
+            }
+        },
+        "Shopping List": {
+            "Select missing ingredients": {
+                "inputs": [
+                    "timestamp_required",
+                    "timestamp_stock"
+                ],
+                "outputs": [
+                    "food_name",
+                    "unit",
+                    "quantity"
+                ],
+                "query": [
+                    "SELECT Required.food_name, Required.unit, Required.total - IFNULL(Stock.total, 0) AS quantity",
+                    "FROM (",
+                        "SELECT I.food_name, T.unit, SUM(I.quantity) as total",
+                        "FROM Home_IMS.MealSchedule AS M",
+                        "JOIN Home_IMS.Ingredients AS I ON I.recipe_name = M.recipe_name",
+                        "JOIN Home_IMS.ItemType AS T ON I.food_name = T.name",
+                        "WHERE M.timestamp <= %s",
+                        "GROUP BY I.food_name",
+                    ") AS Required",
+                    "LEFT JOIN (",
+                        "SELECT S.item_name, SUM(S.quantity) AS total",
+                        "FROM Home_IMS.Inventory AS S",
+                        "WHERE EXISTS (",
+                        "SELECT * FROM Home_IMS.MealSchedule AS M",
+                        "JOIN Home_IMS.Ingredients AS I ON M.recipe_name = I.recipe_name",
+                        "WHERE M.timestamp <= %s",
+                        "AND I.food_name = S.item_name",
+                        ")",
+                        "GROUP BY S.item_name",
+                    ") AS Stock ON Required.food_name = Stock.item_name",
+                    "HAVING quantity > 0;"
+                ]
+            }
+        }
+    }
+}
