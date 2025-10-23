@@ -9,27 +9,22 @@ The goal of this system is to provide a fast, low-friction way to catalog contai
 This is just a first idea, let's not get too excited/upset about these choices.
 
 ### Backend
-- **ASP.NET Core Web API (C#)**  
-- **Entity Framework Core** with **PostgreSQL**  
-- **SignalR** for realtime updates  
-- **Azure Blob Storage** for photos (swappable: S3/MinIO for self-host)  
-- **JWT authentication** (ASP.NET Identity)  
+- Modular Monolithic code base, potentially use microservices for certain features.
+- Python for API gateway.
+- PostgreSQL
 
 ### Frontend
-- **Web app:** React (Vite or Next.js, PWA-capable)  
-- **Mobile app:** React Native (Expo) with QR scanning (NFC later)  
+- **Web app:** React (Vite or Next.js, PWA-capable)
+
+#### Future Front End
+- **Desktop app:** Electron
+- **Mobile app:** React Native (probably) 
 
 ### Infrastructure
-- **Cloud (default):** Azure (App Service, PostgreSQL, Blob Storage, SignalR, Identity)  
-- **Self-host (later):** Docker Compose (API, Postgres, Redis, MinIO, Nginx)  
-
-### Dev Experience
-- **Monorepo structure** with apps (`web`, `mobile`, `api`) and shared packages (`types`, `ui`)  
-- **OpenAPI + NSwag** to generate type-safe TS client for React/React Native  
-- **CI/CD:** GitHub Actions → Azure deploy & Docker builds  
+- **Cloud (default):** Azure
+- **Self-host (later):** Docker Compose 
 
 ## Scope (MVP)
-
 - User authentication (sign up, login, invite to household)  
 - Household → Locations → Containers → Items data model  
 - Each container has a **QR code** (deep link)  
