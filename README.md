@@ -5,6 +5,11 @@ Home IMS is an open-source system for organizing household storage.
 This project is an extension of a previous Home IMS project.
 The goal of this system is to provide a fast, low-friction way to catalog containers and their contents, and to quickly find items later.
 
+## Project Management
+- Discord
+- SharePoint
+- GitHub
+
 ## Proposed Tech Stack
 This is just a first idea, let's not get too excited/upset about these choices.
 
